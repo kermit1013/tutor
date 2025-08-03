@@ -11,6 +11,10 @@ public class User {
         this.username = username;
         this.email = email;
     }
+    // default(empty) constructor for jdbc
+    public User() {
+
+    }
 
     public int getId() {
         return id;
@@ -42,5 +46,15 @@ public class User {
 
     public void setPwd(String pwd) {
         this.pwd = pwd;
+    }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "id=" + id +
+                ", username='" + username + '\'' +
+                ", email='" + email + '\'' +
+                ", pwd='" + pwd + '\'' +
+                '}';
     }
 }
