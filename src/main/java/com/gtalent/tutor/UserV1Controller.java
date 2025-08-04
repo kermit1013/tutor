@@ -18,6 +18,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/v1/users")
+@CrossOrigin("*")
 public class UserV1Controller {
 
 //    由annotation 注入
