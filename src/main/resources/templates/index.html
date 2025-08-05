@@ -17,6 +17,11 @@
 <input id="email" placeholder="Email">
 <button onclick="createUser()">Create</button>
 
+<h3>Search Users</h3>
+<input id="searchKeyword" placeholder="Enter keyword">
+<button onclick="searchUsers()">Search</button>
+<button onclick="getAllUsers()">Clear Search</button>
+
 <h3>All Users</h3>
 <button onclick="getAllUsers()">Refresh List</button>
 <div id="users"></div>
@@ -38,6 +43,21 @@
   async function getAllUsers() {
     const res = await fetch(API);
     const users = await res.json();
+    renderUsers(users);
+  }
+
+  async function searchUsers() {
+    const keyword = document.getElementById('searchKeyword').value;
+    if (!keyword.trim()) {
+      alert('Please enter a keyword to search.');
+      return;
+    }
+    const res = await fetch(`${API}/search?keyword=${encodeURIComponent(keyword)}`);
+    const users = await res.json();
+    renderUsers(users);
+  }
+
+  function renderUsers(users) {
     const usersDiv = document.getElementById('users');
     usersDiv.innerHTML = '';
     users.forEach(user => {
@@ -65,6 +85,7 @@
 
   async function deleteUser(id) {
     const res = await fetch(`${API}/${id}`, { method: 'DELETE' });
+    alert(`User ${id} deleted`);
     if (res.ok) getAllUsers();
   }
 
