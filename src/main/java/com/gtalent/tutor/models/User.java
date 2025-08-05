@@ -1,10 +1,18 @@
 package com.gtalent.tutor.models;
 
+import jakarta.persistence.*;
+
+@Entity
+@Table(name="users")
 public class User {
+    @Id
+    //auto_increment
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
+    @Column(name="username")
     private String username;
+    @Column(name="email")
     private String email;
-    private String pwd;
 
     public User(int id, String username, String email) {
         this.id = id;
@@ -40,13 +48,6 @@ public class User {
         this.email = email;
     }
 
-    public String getPwd() {
-        return pwd;
-    }
-
-    public void setPwd(String pwd) {
-        this.pwd = pwd;
-    }
 
     @Override
     public String toString() {
@@ -54,7 +55,6 @@ public class User {
                 "id=" + id +
                 ", username='" + username + '\'' +
                 ", email='" + email + '\'' +
-                ", pwd='" + pwd + '\'' +
                 '}';
     }
 }

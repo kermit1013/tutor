@@ -85,4 +85,17 @@ public class UserV1Controller {
         }
         return ResponseEntity.notFound().build();
     }
+
+    @GetMapping("/search") //@RequestParam=> ?keyword=....
+    public ResponseEntity<List<GetUserResponse>> searchUser(@RequestParam String keyword) {
+        String sql = "select * from users";
+        List<User> users = jdbcTemplate.query(sql, new BeanPropertyRowMapper<>(User.class));
+        List<GetUserResponse> results = users
+                .stream()
+                .filter(user ->
+                        user.getUsername().toLowerCase().contains(keyword.toLowerCase()))
+                .map(GetUserResponse::new)
+                .toList();
+        return ResponseEntity.ok(results);
+    }
 }
