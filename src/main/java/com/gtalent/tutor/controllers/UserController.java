@@ -1,4 +1,4 @@
-package com.gtalent.tutor;
+package com.gtalent.tutor.controllers;
 
 import com.gtalent.tutor.models.User;
 import com.gtalent.tutor.requests.CreateUserRequest;
