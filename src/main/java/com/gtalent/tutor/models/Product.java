@@ -18,15 +18,31 @@ public class Product {
     private int quantity;
     @Column(name = "status")
     private boolean status;
-    @Column(name = "supplier_id")
-    private int supplierId;
+//    @Column(name = "supplier_id")
+//    private int supplierId;
+    @ManyToOne
+    @JoinColumn(name = "supplier_id")
+    private Supplier supplier;
 
-    public int getSupplierId() {
-        return supplierId;
+    // select * from products
+    //inner join suppliers
+    //on products.supplier_id = suppliers.id
+
+//    public int getSupplierId() {
+//        return supplierId;
+//    }
+//
+//    public void setSupplierId(int supplierId) {
+//        this.supplierId = supplierId;
+//    }
+
+
+    public Supplier getSupplier() {
+        return supplier;
     }
 
-    public void setSupplierId(int supplierId) {
-        this.supplierId = supplierId;
+    public void setSupplier(Supplier supplier) {
+        this.supplier = supplier;
     }
 
     public Product(int id, String name, BigDecimal price, int quantity, boolean status) {

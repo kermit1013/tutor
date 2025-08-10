@@ -14,7 +14,15 @@ public class ProductResponse {
     private BigDecimal price;
     private int quantity;
     private boolean status;
+    private SupplierResponse supplier;
 
+    public SupplierResponse getSupplier() {
+        return supplier;
+    }
+
+    public void setSupplier(SupplierResponse supplier) {
+        this.supplier = supplier;
+    }
     public ProductResponse(Product product) {
         this.id = product.getId();
         this.name = product.getName();
@@ -33,6 +41,7 @@ public class ProductResponse {
 
     public ProductResponse() {
     }
+
 
     public int getId() {
         return id;

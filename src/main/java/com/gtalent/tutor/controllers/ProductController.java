@@ -1,16 +1,14 @@
 package com.gtalent.tutor.controllers;
 
 import com.gtalent.tutor.models.Product;
+import com.gtalent.tutor.models.Supplier;
 import com.gtalent.tutor.models.User;
 import com.gtalent.tutor.repositories.ProductRepository;
+import com.gtalent.tutor.repositories.SupplierRepository;
 import com.gtalent.tutor.requests.CreateProductRequest;
-import com.gtalent.tutor.requests.CreateUserRequest;
 import com.gtalent.tutor.requests.UpdateProductRequest;
-import com.gtalent.tutor.requests.UpdateUserRequest;
-import com.gtalent.tutor.responses.CreateUserResponse;
-import com.gtalent.tutor.responses.GetUserResponse;
 import com.gtalent.tutor.responses.ProductResponse;
-import com.gtalent.tutor.responses.UpdateUserResponse;
+import com.gtalent.tutor.responses.SupplierResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -27,17 +25,23 @@ public class ProductController {
     //Step 3. 建立 Product CRUD APIs
 
     private final ProductRepository productRepository;
+    private final SupplierRepository supplierRepository;
 
     @Autowired
-    public ProductController(ProductRepository productRepository) {
+    public ProductController(ProductRepository productRepository, SupplierRepository supplierRepository) {
         this.productRepository = productRepository;
+        this.supplierRepository = supplierRepository;
     }
 
 
     @GetMapping
     public ResponseEntity<List<ProductResponse>> getAllProducts() {
         List<Product> products = productRepository.findAll();
-        return ResponseEntity.ok(products.stream().map(ProductResponse::new).toList());
+        return ResponseEntity.ok(products.stream().map(product -> {
+            ProductResponse response  = new ProductResponse(product);
+            response.setSupplier(new SupplierResponse(product.getSupplier()));
+            return  response;
+        }).toList());
     }
 
     @GetMapping("/{id}")
@@ -45,6 +49,7 @@ public class ProductController {
         Optional<Product> product = productRepository.findById(id);
         if (product.isPresent()) {
             ProductResponse response = new ProductResponse(product.get());
+            response.setSupplier(new SupplierResponse(product.get().getSupplier()));
             return ResponseEntity.ok(response);
         } else {
             return ResponseEntity.notFound().build();
@@ -73,16 +78,22 @@ public class ProductController {
 
     @PostMapping
     public ResponseEntity<ProductResponse> createProduct(@RequestBody CreateProductRequest request) {
-        Product product = new Product();
-        product.setName(request.getName());
-        product.setPrice(request.getPrice());
-        product.setQuantity(request.getQuantity());
-        product.setStatus(request.isStatus());
-        product.setSupplierId(request.getSupplierId());
-        System.out.println("Before Save:" + product);
-        Product savedProduct = productRepository.save(product);
-        ProductResponse response = new ProductResponse(savedProduct);
-        return ResponseEntity.ok(response);
+        Optional<Supplier> supplier = supplierRepository.findById(request.getSupplierId());
+        if (supplier.isPresent()) {
+            Product product = new Product();
+            product.setName(request.getName());
+            product.setPrice(request.getPrice());
+            product.setQuantity(request.getQuantity());
+            product.setStatus(request.isStatus());
+            product.setSupplier(supplier.get());
+            System.out.println("Before Save:" + product);
+            Product savedProduct = productRepository.save(product);
+            ProductResponse response = new ProductResponse(savedProduct);
+            response.setSupplier(supplier.map(SupplierResponse::new).get());
+            return ResponseEntity.ok(response);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @DeleteMapping("/{id}")
