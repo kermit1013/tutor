@@ -13,7 +13,6 @@ public class ProductResponse {
     private String name;
     private BigDecimal price;
     private int quantity;
-    private boolean status;
     private SupplierResponse supplier;
 
     public SupplierResponse getSupplier() {
@@ -28,7 +27,6 @@ public class ProductResponse {
         this.name = product.getName();
         this.price = product.getPrice();
         this.quantity = product.getQuantity();
-        this.status = product.isStatus();
     }
 
     public ProductResponse(int id, String name, BigDecimal price, int quantity, boolean status) {
@@ -36,7 +34,6 @@ public class ProductResponse {
         this.name = name;
         this.price = price;
         this.quantity = quantity;
-        this.status = status;
     }
 
     public ProductResponse() {
@@ -75,11 +72,4 @@ public class ProductResponse {
         this.quantity = quantity;
     }
 
-    public boolean isStatus() {
-        return status;
-    }
-
-    public void setStatus(boolean status) {
-        this.status = status;
-    }
 }

@@ -2,7 +2,6 @@ package com.gtalent.tutor.controllers;
 
 import com.gtalent.tutor.models.Product;
 import com.gtalent.tutor.models.Supplier;
-import com.gtalent.tutor.models.User;
 import com.gtalent.tutor.repositories.ProductRepository;
 import com.gtalent.tutor.repositories.SupplierRepository;
 import com.gtalent.tutor.requests.CreateProductRequest;
@@ -38,7 +37,9 @@ public class ProductController {
     public ResponseEntity<List<ProductResponse>> getAllProducts() {
         List<Product> products = productRepository.findAll();
         return ResponseEntity.ok(products.stream().map(product -> {
+            // 1. Product -> ProductResponse
             ProductResponse response  = new ProductResponse(product);
+            // 2. 把supplier 填充至 SupplierResponse
             response.setSupplier(new SupplierResponse(product.getSupplier()));
             return  response;
         }).toList());

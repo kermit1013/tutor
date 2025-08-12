@@ -2,22 +2,26 @@ package com.gtalent.tutor.responses;
 
 import com.gtalent.tutor.models.Supplier;
 
+import java.util.List;
+
 public class SupplierResponse {
-
     private int id;
-
     private String name;
-
-
     private String address;
-
-
     private String phone;
-
-
     private String email;
 
+    private List<ProductResponse> products;
+
     public SupplierResponse() {
+    }
+
+    public List<ProductResponse> getProducts() {
+        return products;
+    }
+
+    public void setProducts(List<ProductResponse> products) {
+        this.products = products;
     }
 
     public SupplierResponse(int id, String name, String address, String phone, String email) {
@@ -34,6 +38,10 @@ public class SupplierResponse {
         this.address = supplier.getAddress();
         this.phone = supplier.getPhone();
         this.email = supplier.getEmail();
+        // response.setProducts(supplier.getProducts().stream().map(ProductResponse::new).toList());
+        this.products = supplier.getProducts()
+                .stream()
+                .map(ProductResponse::new).toList();
     }
 
     public int getId() {

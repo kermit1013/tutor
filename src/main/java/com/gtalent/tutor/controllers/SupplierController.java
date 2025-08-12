@@ -1,10 +1,12 @@
 package com.gtalent.tutor.controllers;
 
 
+import com.gtalent.tutor.models.Product;
 import com.gtalent.tutor.models.Supplier;
 import com.gtalent.tutor.repositories.SupplierRepository;
 import com.gtalent.tutor.requests.CreateSupplierRequest;
 import com.gtalent.tutor.requests.UpdateSupplierRequest;
+import com.gtalent.tutor.responses.ProductResponse;
 import com.gtalent.tutor.responses.SupplierResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -27,7 +29,15 @@ public class SupplierController {
     @GetMapping
     public ResponseEntity<List<SupplierResponse>> getAllSuppliers() {
         List<Supplier> suppliers = supplierRepository.findAll();
-        return ResponseEntity.ok(suppliers.stream().map(SupplierResponse::new).toList());
+//        return ResponseEntity.ok(suppliers.stream().map(SupplierResponse::new).toList());
+        List<SupplierResponse> responses = suppliers
+                .stream()
+                .map(supplier -> {
+            SupplierResponse response = new SupplierResponse(supplier);
+            response.setProducts(supplier.getProducts().stream().map(ProductResponse::new).toList());
+            return response;
+        }).toList();
+        return ResponseEntity.ok(responses);
     }
 
     @GetMapping("/{id}")
@@ -35,6 +45,12 @@ public class SupplierController {
         Optional<Supplier> supplier = supplierRepository.findById(id);
         if (supplier.isPresent()) {
             SupplierResponse response = new SupplierResponse(supplier.get());
+            List<Product> productList = supplier.get().getProducts();
+            List<ProductResponse> productResponseList = productList.stream()
+                    .map(product -> new ProductResponse(product))
+                    .toList();
+            response.setProducts(productResponseList);
+
             return ResponseEntity.ok(response);
         } else {
             return ResponseEntity.notFound().build();
