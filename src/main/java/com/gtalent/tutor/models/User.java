@@ -14,11 +14,17 @@ public class User {
     @Column(name="email")
     private String email;
 
+    @Column(name="password")
+    //todo 實際應用環境切勿使用明碼儲存
+    private String password;
+
     public User(int id, String username, String email) {
         this.id = id;
         this.username = username;
         this.email = email;
     }
+
+
     // default(empty) constructor for jdbc
     public User() {
 
@@ -48,6 +54,14 @@ public class User {
         this.email = email;
     }
 
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
 
     @Override
     public String toString() {
