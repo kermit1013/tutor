@@ -13,6 +13,8 @@ public class User {
     private String username;
     @Column(name="email")
     private String email;
+//    @Column(name="role")
+//    private String role = "USER";
 
     @Column(name="password")
     //todo 實際應用環境切勿使用明碼儲存

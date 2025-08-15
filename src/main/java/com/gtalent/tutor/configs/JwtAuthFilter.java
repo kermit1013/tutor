@@ -20,6 +20,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 @Component
@@ -33,7 +34,6 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         String authHeader = request.getHeader("Authorization");
-        System.out.println("authHeader" + authHeader);
         // 1. 檢查Authorization格式是否正確
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             filterChain.doFilter(request, response);
@@ -42,13 +42,14 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         String jwtToken = authHeader.substring(7);
         String username = jwtService.getUsernameFromToken(jwtToken);
         if(username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+            // db裡面找到對應的username
             Optional<User> user = userRepository.findByUsername(username);
+            //todo 驗證token是否過期或無效
             if (user.isPresent()) {
-                System.out.println("user.isPresent() : "+ user);
-                Collection<? extends GrantedAuthority> authorities = getUserAuthorities(user.get());
 
+                //*** 若使用Spring Security (library)必須包含 授權 (Authorization)邏輯->「該用戶能做什麼？」***
+                List<? extends GrantedAuthority> authorities = getUserAuthorities();
                 UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(user.get(), null, authorities);
-//                authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(authenticationToken);
             }
         }
@@ -56,7 +57,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         filterChain.doFilter(request, response);
     }
 
-    private Collection<? extends GrantedAuthority> getUserAuthorities(User user) {
-        return Collections.singleton(new SimpleGrantedAuthority("ROLE_USER"));
+    private List<? extends GrantedAuthority> getUserAuthorities() {
+        return List.of(new SimpleGrantedAuthority("ROLE_USER"));
     }
 }
