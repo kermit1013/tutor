@@ -8,18 +8,14 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -48,16 +44,12 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             if (user.isPresent()) {
 
                 //*** 若使用Spring Security (library)必須包含 授權 (Authorization)邏輯->「該用戶能做什麼？」***
-                List<? extends GrantedAuthority> authorities = getUserAuthorities();
+                List<? extends GrantedAuthority> authorities = List.of(new SimpleGrantedAuthority("ROLE_USER"));
                 UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(user.get(), null, authorities);
                 SecurityContextHolder.getContext().setAuthentication(authenticationToken);
             }
         }
 
         filterChain.doFilter(request, response);
-    }
-
-    private List<? extends GrantedAuthority> getUserAuthorities() {
-        return List.of(new SimpleGrantedAuthority("ROLE_USER"));
     }
 }
