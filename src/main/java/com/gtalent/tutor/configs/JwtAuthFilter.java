@@ -51,8 +51,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         if(username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             // db裡面找到對應的username
             Optional<User> user = userRepository.findByUsername(username);
-            //todo 驗證token是否過期或無效
-            if (user.isPresent()) {
+            if (user.isPresent() ) {
                 //*** 若使用Spring Security (library)必須包含 授權 (Authorization)邏輯->「該用戶能做什麼？」***
                 List<? extends GrantedAuthority> authorities = List.of(new SimpleGrantedAuthority("ROLE_USER"));
                 //該token並非jwt token，而是Spring Security內部使用的token(包含user & authorities)

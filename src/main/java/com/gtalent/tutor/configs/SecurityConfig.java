@@ -25,15 +25,31 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         httpSecurity
+                //stateless jwt 用不上csrf
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(authz -> authz
-                        .requestMatchers("/jwt/**").permitAll()
+                                // method1
+                                .requestMatchers("/jwt/**").permitAll()
+                        .requestMatchers("/session/**").permitAll()
                         .requestMatchers(HttpMethod.GET,"/products/**").permitAll()
                         .requestMatchers(HttpMethod.GET,"/v2/users/**").permitAll()
-                        // /products/** 包含 /products
                         .anyRequest().authenticated()
+
+//                        .requestMatchers("/jwt/**").permitAll()
+//                        .requestMatchers("/session/**").permitAll()
+                        // method2
+//                        .requestMatchers(HttpMethod.POST,"/products/**").authenticated()
+//                        .requestMatchers(HttpMethod.PUT,"/products/**").authenticated()
+//                        .requestMatchers(HttpMethod.DELETE,"/products/**").authenticated()
+//
+//                        .requestMatchers(HttpMethod.POST,"/v2/users/**").authenticated()
+//                        .requestMatchers(HttpMethod.PUT,"/v2/users/**").authenticated()
+//                        .requestMatchers(HttpMethod.DELETE,"/v2/users/**").authenticated()
+//                        .anyRequest().permitAll()
                 )
+                // restful 核心： 伺服器無法從session中獲得使用者資訊
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                // 確保 spring security 進行UsernamePassword的驗證以前，我們的jwtAuthFilter會先被執行
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 
         return httpSecurity.build();

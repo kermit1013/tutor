@@ -1,9 +1,7 @@
 package com.gtalent.tutor.services;
 
 import com.gtalent.tutor.models.User;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.stereotype.Service;
@@ -19,10 +17,15 @@ public class JwtService {
 
     public String generateToken(User user) {
         return Jwts.builder()
+                //唯一的使用者名稱
                 .setSubject(user.getUsername())
+                //發行時間
                 .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + 86400000)) //24小時
+                //過期時間
+                .setExpiration(new Date(System.currentTimeMillis() + 1)) //24小時
+                //對jwt進行簽名
                 .signWith(getKey(), SignatureAlgorithm.HS256)
+                //組合成字串
                 .compact();
     }
 
