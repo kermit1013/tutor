@@ -22,7 +22,7 @@ public class JwtService {
                 //發行時間
                 .setIssuedAt(new Date(System.currentTimeMillis()))
                 //過期時間
-                .setExpiration(new Date(System.currentTimeMillis() + 1)) //24小時
+                .setExpiration(new Date(System.currentTimeMillis() + 86400000 )) //24小時
                 //對jwt進行簽名
                 .signWith(getKey(), SignatureAlgorithm.HS256)
                 //組合成字串

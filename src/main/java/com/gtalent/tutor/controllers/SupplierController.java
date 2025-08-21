@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Optional;
 
+
 @RestController
 @RequestMapping("/suppliers")
 public class SupplierController {
@@ -59,6 +60,7 @@ public class SupplierController {
 
 
     @PutMapping("/{id}")
+//    @PreAuthorize("hasRole('SUPPLIER')")
     public ResponseEntity<SupplierResponse> updateSuppliersById(@PathVariable int id, @RequestBody UpdateSupplierRequest request) {
         Optional<Supplier> supplier = supplierRepository.findById(id);
         if(supplier.isPresent()) {

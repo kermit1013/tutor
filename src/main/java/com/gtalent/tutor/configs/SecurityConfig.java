@@ -8,6 +8,8 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
@@ -28,11 +30,15 @@ public class SecurityConfig {
                 //stateless jwt 用不上csrf
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(authz -> authz
-                                // method1
-                                .requestMatchers("/jwt/**").permitAll()
+                         // method1
+                        .requestMatchers("/jwt/**").permitAll()
                         .requestMatchers("/session/**").permitAll()
                         .requestMatchers(HttpMethod.GET,"/products/**").permitAll()
                         .requestMatchers(HttpMethod.GET,"/v2/users/**").permitAll()
+                                .requestMatchers(HttpMethod.DELETE, "/v2/users/**").hasRole("ADMIN")
+                        //Spring Security 將會自動加上 ROLE_ -> ROLE_ADMIN
+                                .requestMatchers(HttpMethod.GET,"/suppliers/**").permitAll()
+                                .requestMatchers("/suppliers/**").hasRole("SUPPLIER")
                         .anyRequest().authenticated()
 
 //                        .requestMatchers("/jwt/**").permitAll()
@@ -53,5 +59,10 @@ public class SecurityConfig {
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 
         return httpSecurity.build();
+    }
+
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
     }
 }

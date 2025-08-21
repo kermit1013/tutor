@@ -53,7 +53,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             Optional<User> user = userRepository.findByUsername(username);
             if (user.isPresent() ) {
                 //*** 若使用Spring Security (library)必須包含 授權 (Authorization)邏輯->「該用戶能做什麼？」***
-                List<? extends GrantedAuthority> authorities = List.of(new SimpleGrantedAuthority("ROLE_USER"));
+                List<? extends GrantedAuthority> authorities = List.of(new SimpleGrantedAuthority(user.get().getRole()));
                 //該token並非jwt token，而是Spring Security內部使用的token(包含user & authorities)
                 UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(user.get(), null, authorities);
                 // 將 內部使用的token 投進 Spring Security 認證箱（SecurityContextHolder）
