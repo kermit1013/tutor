@@ -72,6 +72,7 @@ public class SessionAuthController {
         user.setUsername(request.getUsername());
         user.setEmail(request.getEmail());
         user.setPassword(request.getPassword());
+        user.setRole("ROLE_USER");
         userRepository.save(user);
 
         session.setAttribute("userId", user.getId());
