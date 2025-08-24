@@ -30,28 +30,16 @@ public class SecurityConfig {
                 //stateless jwt 用不上csrf
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(authz -> authz
-                         // method1
-                        .requestMatchers("/jwt/**").permitAll()
-                        .requestMatchers("/session/**").permitAll()
-                        .requestMatchers(HttpMethod.GET,"/products/**").permitAll()
-                        .requestMatchers(HttpMethod.GET,"/v2/users/**").permitAll()
+                                .requestMatchers("/jwt/**").permitAll()
+                                .requestMatchers("/session/**").permitAll()
+                                .requestMatchers("/swagger-ui/**", "/v3/api-docs/**","/swagger-ui.html").permitAll()
+                                .requestMatchers(HttpMethod.GET,"/products/**").permitAll()
+                                .requestMatchers(HttpMethod.GET,"/v2/users/**").permitAll()
                                 .requestMatchers(HttpMethod.DELETE, "/v2/users/**").hasRole("ADMIN")
-                        //Spring Security 將會自動加上 ROLE_ -> ROLE_ADMIN
+                                //Spring Security 將會自動加上 ROLE_ -> ROLE_ADMIN
                                 .requestMatchers(HttpMethod.GET,"/suppliers/**").permitAll()
                                 .requestMatchers("/suppliers/**").hasRole("SUPPLIER")
-                        .anyRequest().authenticated()
-
-//                        .requestMatchers("/jwt/**").permitAll()
-//                        .requestMatchers("/session/**").permitAll()
-                        // method2
-//                        .requestMatchers(HttpMethod.POST,"/products/**").authenticated()
-//                        .requestMatchers(HttpMethod.PUT,"/products/**").authenticated()
-//                        .requestMatchers(HttpMethod.DELETE,"/products/**").authenticated()
-//
-//                        .requestMatchers(HttpMethod.POST,"/v2/users/**").authenticated()
-//                        .requestMatchers(HttpMethod.PUT,"/v2/users/**").authenticated()
-//                        .requestMatchers(HttpMethod.DELETE,"/v2/users/**").authenticated()
-//                        .anyRequest().permitAll()
+                                .anyRequest().authenticated()
                 )
                 // restful 核心： 伺服器無法從session中獲得使用者資訊
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
